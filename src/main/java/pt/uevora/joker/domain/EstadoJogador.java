@@ -28,7 +28,7 @@ public class EstadoJogador implements Serializable {
     }
 
     public void ajustarJokers(int delta) {
-        quantidadeJokers = Math.max(0, quantidadeJokers + delta);
+        quantidadeJokers = clampJokers(quantidadeJokers + delta);
     }
 
     public void avancarNivelDinheiro() {
@@ -41,14 +41,20 @@ public class EstadoJogador implements Serializable {
 
     public void ajustarNivelDinheiro(int delta) {
         int novoIndice = indiceNivelDinheiro + delta;
-        if (novoIndice < 0) {
-            indiceNivelDinheiro = 0;
-            return;
+        indiceNivelDinheiro = clampNivel(novoIndice);
+    }
+
+    private int clampNivel(int indice) {
+        if (indice < 0) {
+            return 0;
         }
-        if (novoIndice > MoneyLevels.maxIndex()) {
-            indiceNivelDinheiro = MoneyLevels.maxIndex();
-            return;
+        if (indice > MoneyLevels.maxIndex()) {
+            return MoneyLevels.maxIndex();
         }
-        indiceNivelDinheiro = novoIndice;
+        return indice;
+    }
+
+    private int clampJokers(int jokers) {
+        return Math.max(0, jokers);
     }
 }

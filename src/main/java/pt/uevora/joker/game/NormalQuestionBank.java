@@ -25,7 +25,7 @@ public class NormalQuestionBank {
         }
         PerguntaNormal pergunta = fila.pollFirst();
         if (pergunta == null) {
-            throw new IllegalStateException("No more unused questions for level " + levelValue);
+            throw new IllegalStateException("Question bank exhausted for level " + levelValue);
         }
         return pergunta;
     }

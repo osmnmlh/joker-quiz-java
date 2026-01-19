@@ -32,6 +32,8 @@ public class JogoDoJoker {
             executarJogo(banco);
         } catch (IOException e) {
             System.err.println("Error: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            System.err.println("Error: " + e.getMessage());
         }
     }
 

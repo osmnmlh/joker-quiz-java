@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
-import pt.uevora.joker.io.QuestionBankBootstrap;
+import pt.uevora.joker.game.JogoDoJoker;
 import pt.uevora.joker.io.QuestionCache;
 import pt.uevora.joker.io.QuestionPaths;
 import pt.uevora.joker.io.parsing.PerguntaNormalParser;
@@ -28,7 +26,7 @@ public class Main {
                     handleBuildCache();
                     break;
                 case "play":
-                    handlePlay();
+                    new JogoDoJoker().jogar();
                     break;
                 default:
                     printUsage();
@@ -56,21 +54,6 @@ public class Main {
                     + ", but bonus parsing is not implemented yet. Skipping bonus cache.");
         } else {
             System.out.println("Warning: no bonus question file found; skipping bonus cache.");
-        }
-    }
-
-    private static void handlePlay() throws IOException {
-        Map<Integer, List<PerguntaNormal>> perguntasPorNivel = QuestionBankBootstrap.carregarPerguntasNormais();
-        for (Map.Entry<Integer, List<PerguntaNormal>> entry : perguntasPorNivel.entrySet()) {
-            System.out.println("Loaded " + entry.getValue().size()
-                    + " cached questions for level " + entry.getKey());
-        }
-
-        if (!Files.exists(QuestionPaths.bonusCacheFile())) {
-            System.out.println("Warning: bonus cache not available yet.");
-        } else {
-            List<PerguntaBonus> bonus = QuestionCache.loadPerguntasBonus();
-            System.out.println("Loaded " + bonus.size() + " cached bonus questions.");
         }
     }
 

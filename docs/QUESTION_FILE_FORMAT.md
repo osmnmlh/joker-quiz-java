@@ -2,24 +2,40 @@
 
 ## Discovered Question Files
 
-No question files were found in the current repository snapshot. The repository only contains `.gitkeep` and Git metadata, so no level/bonus question files are available to inspect.
-
 | File Path | Type | Encoding Notes |
 | --- | --- | --- |
-| _None found_ | N/A | N/A |
+| perguntas_200.txt | 200 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_500.txt | 500 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_1000.txt | 1000 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_3000.txt | 3000 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_10000.txt | 10000 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_50000.txt | 50000 level questions | UTF-8; Portuguese text; 4 options per question |
 
 ## Format Specification
 
-No format specification can be derived because no question files are present in the repository. The contract must be documented after the real question files are added.
+Normal question files use a fixed 7-line block per question:
+
+1. Line 1: Question text.
+2. Lines 2–5: Answer options labeled "A. ...", "B. ...", "C. ...", "D. ..." (one per line).
+3. Line 6: Single letter (A/B/C/D) indicating the correct option.
+4. Line 7: Blank line separating question blocks.
+
+There is no joker-eligibility metadata in these files.
 
 ## Examples
 
-No real examples are available because no question files were found in this repository snapshot.
+Example question block (normal question file):
+
+```
+Qual e a capital de Portugal?
+A. Lisboa
+B. Porto
+C. Faro
+D. Coimbra
+A
+
+```
 
 ## Ambiguities / Open Questions
 
-- Where are the real question files stored (path and naming convention)?
-- What are the exact file formats for normal money levels (200/500/1000/3000/10000/50000)?
-- What is the exact file format for bonus questions?
-- How are answer options and correct answers encoded?
-- Is there metadata for joker elimination (e.g., eligible wrong options)?
+- No bonus question file has been provided yet, so its format remains unknown.

@@ -8,10 +8,15 @@ import java.util.Map;
 
 import pt.uevora.joker.domain.EstadoJogador;
 import pt.uevora.joker.domain.MoneyLevels;
+import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
+import pt.uevora.joker.game.bonus.BonusQuestionBank;
+import pt.uevora.joker.game.bonus.BonusRound;
 import pt.uevora.joker.game.mechanics.JokerMechanics;
 import pt.uevora.joker.game.mechanics.PerguntaNormalSession;
 import pt.uevora.joker.io.QuestionBankBootstrap;
+import pt.uevora.joker.io.QuestionCache;
+import pt.uevora.joker.io.QuestionPaths;
 
 public class JogoDoJoker {
     private static final int TOTAL_ROUNDS = 12;
@@ -60,6 +65,10 @@ public class JogoDoJoker {
             } else {
                 aplicarPenalidadePorErro(estado);
                 System.out.println("Wrong answer.");
+            }
+
+            if (round == 4 || round == 8) {
+                executarBonusSeDisponivel(estado, reader);
             }
         }
 
@@ -171,5 +180,28 @@ public class JogoDoJoker {
             char letra = (char) ('A' + indice);
             System.out.println(letra + ". " + pergunta.getOpcoes().get(indice));
         }
+    }
+
+    private void executarBonusSeDisponivel(EstadoJogador estado, BufferedReader reader) throws IOException {
+        List<PerguntaBonus> bonusPerguntas = carregarPerguntasBonus();
+        if (bonusPerguntas.isEmpty()) {
+            System.out.println("Warning: bonus round skipped because no bonus questions are available.");
+            return;
+        }
+        BonusQuestionBank banco = new BonusQuestionBank(bonusPerguntas);
+        new BonusRound().executar(estado, banco, reader);
+    }
+
+    private List<PerguntaBonus> carregarPerguntasBonus() throws IOException {
+        if (java.nio.file.Files.exists(QuestionPaths.bonusCacheFile())) {
+            return QuestionCache.loadPerguntasBonus();
+        }
+
+        if (QuestionPaths.findBonusTextFile().isPresent()) {
+            System.out.println("Warning: bonus question file found but parsing is not implemented yet.");
+        } else {
+            System.out.println("Warning: bonus question file/cache missing; bonus rounds will be skipped.");
+        }
+        return java.util.Collections.emptyList();
     }
 }

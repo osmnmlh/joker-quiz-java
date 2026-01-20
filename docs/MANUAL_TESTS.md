@@ -120,6 +120,32 @@
 - **Expected**:
   - The program re-prompts with guidance until valid input is provided.
 
+## MT-15 Joker eligibility restricted to eligible wrong options
+- **Setup**: Choose a normal question and identify its correct answer; use one joker.
+- **Command**: `java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play`
+- **Input**:
+  - Use a joker (`y`) once.
+- **Expected**:
+  - Output includes `Joker used: eliminated option X (eligible wrong option).`
+  - The eliminated option must be one of the two eligible wrong indices defined for that question.
+
+## MT-16 Penalty N<3 formula and clamp
+- **Setup**: Reduce jokers to N=1 and ensure current level index is 0 or 1.
+- **Command**: `java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play`
+- **Input**:
+  - Answer a question incorrectly.
+- **Expected**:
+  - Level drops by `(3 - N)` and clamps at 0.
+  - Joker count becomes 0 after the penalty.
+
+## MT-17 Invalid input reprompt (bonus)
+- **Setup**: Bonus cache exists (`data/cache/perguntas_bonus.ser`).
+- **Command**: `java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play`
+- **Input**:
+  - During bonus, enter invalid answers (e.g., `C`, `1`) while time remains.
+- **Expected**:
+  - Bonus round reprompts with `Invalid answer. Please enter A or B.` and continues until timeout or valid input.
+
 ## MT-14 Parse-once proof (rename text files)
 - **Setup**:
   - Ensure caches exist from MT-01.

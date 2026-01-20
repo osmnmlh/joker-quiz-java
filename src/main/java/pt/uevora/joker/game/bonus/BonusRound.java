@@ -45,16 +45,12 @@ public class BonusRound {
                 }
 
                 // Best-effort timing: console input may block; we avoid starting a new question after timeout.
-                Optional<String> resposta = readLineWithTimeout(reader, executor, remainingMs);
-                if (!resposta.isPresent()) {
+                Optional<Integer> indice = solicitarRespostaBonus(reader, executor, endTime);
+                if (!indice.isPresent()) {
                     System.out.println("Time is up!");
                     break;
                 }
-
-                int indice = letraParaIndice(resposta.get().trim().toUpperCase());
-                if (indice == -1) {
-                    System.out.println("Invalid answer. Skipping question.");
-                } else if (pergunta.validarResposta(indice)) {
+                if (pergunta.validarResposta(indice.get())) {
                     corretas++;
                     System.out.println("Correct!");
                 } else {
@@ -91,6 +87,28 @@ public class BonusRound {
         } catch (ExecutionException e) {
             throw new IOException("Failed to read bonus input", e.getCause());
         }
+    }
+
+    private Optional<Integer> solicitarRespostaBonus(BufferedReader reader, ExecutorService executor, long endTime)
+            throws IOException {
+        while (System.currentTimeMillis() < endTime) {
+            long remainingMs = endTime - System.currentTimeMillis();
+            if (remainingMs <= 0) {
+                break;
+            }
+            // Best-effort timing: console input may block; we avoid starting a new question after timeout.
+            Optional<String> resposta = readLineWithTimeout(reader, executor, remainingMs);
+            if (!resposta.isPresent()) {
+                return Optional.empty();
+            }
+            int indice = letraParaIndice(resposta.get().trim().toUpperCase());
+            if (indice == -1) {
+                System.out.println("Invalid answer. Please enter A or B.");
+                continue;
+            }
+            return Optional.of(indice);
+        }
+        return Optional.empty();
     }
 
     private int letraParaIndice(String letra) {

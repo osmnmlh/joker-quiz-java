@@ -42,6 +42,11 @@ This project implements a Java OOP simulation of the game “Jogo do Joker.” T
 - Bonus text file may be absent; in that case, bonus rounds are skipped with warnings.
 - Bonus input timing is best-effort in a console: a question in progress may finish after timeout, but no new question starts after timeout.
 
+## Rule Interpretations & Evidence
+
+- **Joker eligibility**: eligible wrong options are stored in `ElegibilidadeJoker`; elimination is restricted to those indices in `JokerMechanics#eliminarElegivel` and logged in `JokerMechanics#applyOneJoker`.
+- **Penalty with N<3 jokers**: the level drop follows `K1 = K − (3 − N)` in `JogoDoJoker#aplicarPenalidadePorErro`, and jokers are reduced to zero as the chosen interpretation.
+
 ## How to Run & Verify
 
 - Build and run instructions are in `docs/RUNBOOK.md`.

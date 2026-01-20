@@ -16,9 +16,9 @@
 | REQ-10 | Each normal round: new question with 4 options. | [done] | Evidence: `PerguntaNormal` (4 options) used per round in `JogoDoJoker`. |
 | REQ-11 | Correct answer: advance one money level. | [done] | Evidence: `JogoDoJoker` uses `EstadoJogador#avancarNivelDinheiro`. |
 | REQ-12 | Wrong + jokers >=3: lose 3 jokers, money level unchanged. | [done] | Evidence: `JogoDoJoker#aplicarPenalidadePorErro` branch `jokers >= 3`. |
-| REQ-13 | Wrong + jokers N<3: descend money level with K1 + (3−N) = K. | [done] | Evidence: `JogoDoJoker#aplicarPenalidadePorErro` computes `indiceAtual - (3 - jokers)`. |
+| REQ-13 | Wrong + jokers N<3: descend money level with K1 + (3−N) = K. | [done] | Evidence: `JogoDoJoker#aplicarPenalidadePorErro` computes `indiceAtual - (3 - jokers)` and clamps via `EstadoJogador#ajustarNivelDinheiro`. |
 | REQ-14 | Player may use jokers to reduce options. | [done] | Evidence: `JokerMechanics` + `JogoDoJoker` joker prompts. |
-| REQ-15 | Using 1 joker: lose 1 joker and eliminate an incorrect option among two possible incorrect options. | [done] | Evidence: `JokerMechanics#applyOneJoker` uses `ElegibilidadeJoker` indices and decrements jokers. |
+| REQ-15 | Using 1 joker: lose 1 joker and eliminate an incorrect option among two possible incorrect options. | [done] | Evidence: `JokerMechanics#applyOneJoker` + `JokerMechanics#eliminarElegivel` restrict elimination to eligible indices. |
 | REQ-16 | Note: using 3 jokers leaves only correct option; lose 3 jokers. | [done] | Evidence: `JokerMechanics#applyOneJoker` keeps only correct option after 3rd use. |
 | REQ-17 | Note: using 2 jokers then wrong can lose 5 jokers total. | [done] | Evidence: `JokerMechanics` joker usage + `JogoDoJoker#aplicarPenalidadePorErro` (3 jokers). |
 | REQ-18 | Final prize equals final money level reached. | [done] | Evidence: `JogoDoJoker` prints final prize from `MoneyLevels` using current index. |
@@ -26,7 +26,7 @@
 | REQ-20 | Bonus: answer as many as possible in 1 minute. | [done] | Evidence: `BonusRound` enforces 60-second window. |
 | REQ-21 | Bonus questions have 2 options. | [done] | Evidence: `PerguntaBonus` requires 2 options; `BonusRound` uses A/B. |
 | REQ-22 | Bonus reward: +1 joker per 5 correct. | [done] | Evidence: `BonusRound` awards `corretas / 5`. |
-| REQ-23 | Last round: player may stop and descend one money level. | [done] | Evidence: `JogoDoJoker` stop prompt in final round and `ajustarNivelDinheiro(-1)`. |
+| REQ-23 | Last round: player may stop and descend one money level. | [done] | Evidence: `JogoDoJoker#desejaParar` reprompts invalid input and accepts stop; `ajustarNivelDinheiro(-1)`. |
 | REQ-24 | Advice note about stopping in last round (no implementation required). | [not yet] | Evidence: N/A (admin/process). |
 | REQ-25 | Questions provided in text files. | [done] | Evidence: `QuestionPaths#normalTextFile` expects `perguntas_*.txt`. |
 | REQ-26 | Must read text files and create Pergunta objects. | [done] | Evidence: `PerguntaNormalParser#parse` builds `PerguntaNormal` objects; `PerguntaBonusParser#parse` builds `PerguntaBonus` objects. |
@@ -37,7 +37,7 @@
 | REQ-31 | There is one file per money level (200/500/1000/3000/10000/50000) + one bonus file. | [done] | Evidence: normal files expected in repo root; bonus file exists at `perguntas_bonus.txt` and is discoverable via `QuestionPaths#findBonusTextFile`. |
 | REQ-32 | Implement class JogoDoJoker. | [done] | Evidence: `pt.uevora.joker.game.JogoDoJoker`. |
 | REQ-33 | JogoDoJoker has method jogar(). | [done] | Evidence: `JogoDoJoker#jogar`. |
-| REQ-34 | Must account for joker usage (eliminate wrong options). | [done] | Evidence: `JokerMechanics#applyOneJoker`. |
+| REQ-34 | Must account for joker usage (eliminate wrong options). | [done] | Evidence: `JokerMechanics#applyOneJoker` enforces eligible wrong options and logs elimination. |
 | REQ-35 | Must ensure no repeated questions within the same game. | [done] | Evidence: `NormalQuestionBank#getNextQuestionForLevel` dequeues and fails when exhausted. |
 | REQ-36 | Bonus rounds occur before round #5 and before round #9. | [done] | Evidence: `JogoDoJoker` triggers bonus after rounds 4 and 8. |
 | REQ-37 | Bonus lasts 1 minute, uses bonus-type questions. | [done] | Evidence: `BonusRound` 60s timer with `PerguntaBonus`. |

@@ -36,6 +36,12 @@
 **Q: How do you ensure “no repeated questions”?**
 - `NormalQuestionBank` dequeues questions per level and throws if exhausted.
 
+**Q: How do you guarantee the joker removes only eligible wrong options?**
+- `ElegibilidadeJoker` stores the two eligible wrong indices and `JokerMechanics#eliminarElegivel` selects only from them.
+
+**Q: How is the penalty formula implemented?**
+- `JogoDoJoker#aplicarPenalidadePorErro` applies the `(3 − N)` level drop and clamps via `EstadoJogador`.
+
 **Q: How do you enforce the 60-second bonus?**
 - `BonusRound` uses a timed loop with a `Future.get(timeout)`; it won’t start a new question after timeout.
 

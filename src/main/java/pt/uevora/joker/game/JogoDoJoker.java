@@ -87,7 +87,7 @@ public class JogoDoJoker {
                 return false;
             }
             String normalized = input.trim().toLowerCase();
-            if (normalized.equals("y") || normalized.equals("yes")) {
+            if (normalized.equals("y") || normalized.equals("yes") || normalized.equals("stop")) {
                 return true;
             }
             if (normalized.equals("n") || normalized.equals("no")) {

@@ -40,6 +40,8 @@ public final class JokerMechanics {
         }
 
         session.removerOpcao(removida);
+        System.out.println("Joker used: eliminated option " + indexToLetter(removida)
+                + " (eligible wrong option).");
         session.incrementarJokersAplicados();
         playerState.ajustarJokers(-1);
 
@@ -80,5 +82,9 @@ public final class JokerMechanics {
             return maior;
         }
         return null;
+    }
+
+    private static String indexToLetter(int index) {
+        return String.valueOf((char) ('A' + index));
     }
 }

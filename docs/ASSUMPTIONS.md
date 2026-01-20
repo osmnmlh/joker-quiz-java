@@ -2,6 +2,8 @@
 
 ## Inputs & Data Files
 
+- Bonus question file is required by the spec but not provided in this repo; bonus parsing is deferred until the file exists.
+
 ## Runtime Environment
 
 ## User Interaction

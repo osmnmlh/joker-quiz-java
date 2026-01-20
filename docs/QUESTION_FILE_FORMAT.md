@@ -36,6 +36,12 @@ A
 
 ```
 
+## Bonus Question File Status (TBD)
+
+- The bonus question text file is required by the spec but has not been provided in this repo.
+- Until the file exists, the exact bonus format cannot be documented or parsed.
+- Decision: treat bonus format as **TBD** and implement a warning/skip path; once the file is provided, document the observed format here and add parsing/caching.
+
 ## Ambiguities / Open Questions
 
 - No bonus question file has been provided yet, so its format remains unknown.

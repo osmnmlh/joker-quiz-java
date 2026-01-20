@@ -6,10 +6,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
 import pt.uevora.joker.game.JogoDoJoker;
 import pt.uevora.joker.io.QuestionCache;
 import pt.uevora.joker.io.QuestionPaths;
+import pt.uevora.joker.io.parsing.PerguntaBonusParser;
 import pt.uevora.joker.io.parsing.PerguntaNormalParser;
 
 public class Main {
@@ -50,8 +52,9 @@ public class Main {
 
         Optional<Path> bonusFile = QuestionPaths.findBonusTextFile();
         if (bonusFile.isPresent()) {
-            System.out.println("Warning: bonus file found at " + bonusFile.get()
-                    + ", but bonus parsing is not implemented yet. Skipping bonus cache.");
+            List<PerguntaBonus> perguntasBonus = PerguntaBonusParser.parse(bonusFile.get());
+            QuestionCache.savePerguntasBonus(perguntasBonus);
+            System.out.println("Cached " + perguntasBonus.size() + " bonus questions");
         } else {
             System.out.println("Warning: no bonus question file found; skipping bonus cache.");
         }

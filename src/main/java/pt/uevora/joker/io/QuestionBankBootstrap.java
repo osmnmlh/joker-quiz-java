@@ -6,8 +6,11 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
+import pt.uevora.joker.io.parsing.PerguntaBonusParser;
 import pt.uevora.joker.io.parsing.PerguntaNormalParser;
 
 public final class QuestionBankBootstrap {
@@ -45,5 +48,21 @@ public final class QuestionBankBootstrap {
             perguntasPorNivel.put(level, QuestionCache.loadPerguntasNormais(level));
         }
         return perguntasPorNivel;
+    }
+
+    public static List<PerguntaBonus> carregarPerguntasBonus() throws IOException {
+        if (Files.exists(QuestionPaths.bonusCacheFile())) {
+            return QuestionCache.loadPerguntasBonus();
+        }
+
+        Optional<Path> bonusFile = QuestionPaths.findBonusTextFile();
+        if (!bonusFile.isPresent()) {
+            System.out.println("Warning: no bonus question file found; skipping bonus cache.");
+            return java.util.Collections.emptyList();
+        }
+
+        List<PerguntaBonus> parsed = PerguntaBonusParser.parse(bonusFile.get());
+        QuestionCache.savePerguntasBonus(parsed);
+        return QuestionCache.loadPerguntasBonus();
     }
 }

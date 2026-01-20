@@ -2,6 +2,18 @@
 
 Java OOP simulation of “Jogo do Joker”. This repository includes parsing, caching, the 12-round core loop, and bonus rounds.
 
+## TL;DR Quick Run
+
+```bash
+mvn -q -DskipTests package
+java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main build-cache
+java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play
+```
+
+Notes:
+- Place question text files in the repo root (`perguntas_*.txt`, plus `perguntas_bonus.txt` if provided).
+- Cache files are written to `data/cache/`.
+
 ## Build
 
 ```bash

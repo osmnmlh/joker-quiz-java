@@ -1,44 +1,46 @@
 # Submission Guide
 
-## ZIP Name Format
+## ZIP Name Format (Required)
 
-Use the required naming pattern from the spec. If the exact pattern must include student numbers and parts, a placeholder example is:
+Use the exact naming rule from the PDF. Placeholder example with student numbers and parts:
 
 ```
-EX00000_EX00001_PartI_PartII.zip
+STUDENT1_STUDENT2_PARTI_PARTII.zip
 ```
 
-Adjust to match the required format (student IDs and parts performed).
+Replace `STUDENT1_STUDENT2` with the official student numbers and list only the parts you performed.
 
 ## ZIP Contents (Include)
 
-- `src/**`
+Required project content:
+
+- `src/`
 - `pom.xml`
-- `docs/**`
-  - `docs/SPEC_COMPLIANCE.md`
-  - `docs/RUNBOOK.md`
-  - `docs/MANUAL_TESTS.md`
-  - `docs/QUESTION_FILE_FORMAT.md`
-  - `docs/ASSUMPTIONS.md`
-  - `docs/REPORT.md`
-  - `docs/DEFENSE.md`
-  - `docs/SUBMISSION.md`
-- Question text files at repo root (if required by spec):
+- `docs/`
+- Question text files in the repo root:
   - `perguntas_200.txt`
   - `perguntas_500.txt`
   - `perguntas_1000.txt`
   - `perguntas_3000.txt`
   - `perguntas_10000.txt`
   - `perguntas_50000.txt`
-  - Bonus file (if provided by the course), placed at repo root with `bonus` in its filename.
+  - Bonus file (if provided), e.g. `perguntas_bonus.txt`
+
+## Cache Inclusion Policy (`data/cache/`)
+
+Preferred approach (recommended):
+- **Exclude** `data/cache/` from the ZIP and run `build-cache` in the evaluator environment.
+
+Fallback approach (if the instructor requires object files):
+- **Include** `data/cache/` and document that it was built using `build-cache`.
+
+If the PDF is ambiguous, **state both** and recommend the preferred approach above.
 
 ## ZIP Contents (Exclude)
 
 - `target/`
-- `data/cache/` (generated caches)
 - `.git/`
-
-> If the spec explicitly requires including caches, add `data/cache/` to the ZIP; otherwise keep it excluded.
+- `data/cache/` (unless explicitly required as described above)
 
 ## Repro Commands
 
@@ -57,19 +59,19 @@ Play:
 java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play
 ```
 
-## Pre-Submit Checklist
+## Submission Checklist
 
-- [ ] Build succeeds with `mvn -q -DskipTests package`.
-- [ ] `target/joker-quiz-0.1.0-SNAPSHOT.jar` exists.
-- [ ] Question files are present in repo root (normal levels, and bonus if provided).
+- [ ] ZIP name matches the PDF rule (student numbers + parts).
+- [ ] `src/` is included in the ZIP.
+- [ ] `pom.xml` is included in the ZIP.
+- [ ] `docs/` is included in the ZIP.
+- [ ] Question files are included at the repo root (normal + bonus if provided).
+- [ ] `mvn -q -DskipTests package` succeeds.
 - [ ] `build-cache` creates `data/cache/*.ser` for normal levels.
-- [ ] If no bonus file exists, `build-cache` prints the warning and continues.
-- [ ] `play` starts without parsing when cache exists.
-- [ ] Bonus rounds trigger after rounds 4 and 8 when bonus cache is present.
-- [ ] Bonus reward increments jokers by `floor(correct/5)`.
-- [ ] Final round stop rule works (descend one money level).
-- [ ] No repeated questions within a game session.
-- [ ] `docs/SPEC_COMPLIANCE.md` reflects current status and evidence.
-- [ ] `docs/RUNBOOK.md` and `docs/MANUAL_TESTS.md` are updated.
-- [ ] `docs/REPORT.md`, `docs/DEFENSE.md`, and this `docs/SUBMISSION.md` are included.
-- [ ] ZIP excludes `target/`, `data/cache/`, and `.git/` unless the spec requires otherwise.
+- [ ] `play` starts and shows the first question.
+- [ ] Bonus round appears after round 4 when bonus cache exists.
+- [ ] Parse-once proof is reproducible (rename text files after cache exists).
+- [ ] No repeated questions within a session (bank exhaustion fails fast).
+- [ ] `docs/SPEC_COMPLIANCE.md` maps all requirements to evidence.
+- [ ] ZIP excludes `target/` and `.git/`.
+- [ ] `data/cache/` inclusion policy is explicitly stated.

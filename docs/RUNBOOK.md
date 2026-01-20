@@ -14,6 +14,11 @@ Expected output:
 ### Build cache
 
 ```bash
+java -cp target/classes pt.uevora.joker.app.Main build-cache
+```
+
+Alternate (after packaging a JAR):
+```bash
 java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main build-cache
 ```
 

@@ -31,10 +31,10 @@
 | REQ-25 | Questions provided in text files. | [done] | Evidence: `QuestionPaths#normalTextFile` expects `perguntas_*.txt`. |
 | REQ-26 | Must read text files and create Pergunta objects. | [done] | Evidence: `PerguntaNormalParser#parse` builds `PerguntaNormal` objects; `PerguntaBonusParser#parse` builds `PerguntaBonus` objects. |
 | REQ-27 | May build class hierarchy for question types. | [done] | Evidence: `Pergunta` abstract + `PerguntaNormal`/`PerguntaBonus`. |
-| REQ-28 | Must store Pergunta objects in object files (serialized). | [done] | Evidence: `QuestionCache#savePerguntasNormais`/`savePerguntasBonus` with `ObjectOutputStream`. |
-| REQ-29 | Text files read only once. | [done] | Evidence: `QuestionBankBootstrap#carregarPerguntasNormais` parses only if cache missing; `carregarPerguntasBonus` does the same for bonus. |
-| REQ-30 | Evaluation reads questions from object files (not text). | [done] | Evidence: `QuestionBankBootstrap` loads caches when present for both normal and bonus. |
-| REQ-31 | There is one file per money level (200/500/1000/3000/10000/50000) + one bonus file. | [done] | Evidence: normal files exist; bonus file exists at `perguntas_bonus.txt` and is discoverable via `QuestionPaths#findBonusTextFile`. |
+| REQ-28 | Must store Pergunta objects in object files (serialized). | [done] | Evidence: `QuestionCache#savePerguntasNormais`/`savePerguntasBonus` with `ObjectOutputStream`, cache path `data/cache/perguntas_bonus.ser`. |
+| REQ-29 | Text files read only once. | [done] | Evidence: `QuestionBankBootstrap#carregarPerguntasNormais` parses only if cache missing; `carregarPerguntasBonus` does the same for bonus; manual proof in `docs/MANUAL_TESTS.md` (MT-14). |
+| REQ-30 | Evaluation reads questions from object files (not text). | [done] | Evidence: `QuestionBankBootstrap` loads caches when present for both normal and bonus; manual proof in `docs/MANUAL_TESTS.md` (MT-14). |
+| REQ-31 | There is one file per money level (200/500/1000/3000/10000/50000) + one bonus file. | [done] | Evidence: normal files expected in repo root; bonus file exists at `perguntas_bonus.txt` and is discoverable via `QuestionPaths#findBonusTextFile`. |
 | REQ-32 | Implement class JogoDoJoker. | [done] | Evidence: `pt.uevora.joker.game.JogoDoJoker`. |
 | REQ-33 | JogoDoJoker has method jogar(). | [done] | Evidence: `JogoDoJoker#jogar`. |
 | REQ-34 | Must account for joker usage (eliminate wrong options). | [done] | Evidence: `JokerMechanics#applyOneJoker`. |

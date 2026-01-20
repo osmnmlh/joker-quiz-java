@@ -42,6 +42,9 @@ public final class QuestionPaths {
             if (matches.isEmpty()) {
                 return Optional.empty();
             }
+            if (matches.size() > 1) {
+                System.out.println("Warning: multiple bonus files found; using " + matches.get(0).getFileName());
+            }
             return Optional.of(matches.get(0));
         }
     }

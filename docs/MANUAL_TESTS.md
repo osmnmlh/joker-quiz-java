@@ -119,3 +119,18 @@
   - Enter invalid answer options (e.g., `E`, `1`).
 - **Expected**:
   - The program re-prompts with guidance until valid input is provided.
+
+## MT-14 Parse-once proof (rename text files)
+- **Setup**:
+  - Ensure caches exist from MT-01.
+  - Rename text files temporarily (do not delete):
+    - `mv perguntas_200.txt perguntas_200.txt.bak` (repeat for all normal files)
+    - `mv perguntas_bonus.txt perguntas_bonus.txt.bak`
+- **Command**:
+  - `java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play`
+- **Input**: Provide any valid inputs.
+- **Expected**:
+  - Game starts from cache without attempting to re-parse text files.
+  - Bonus rounds use cached bonus questions if `data/cache/perguntas_bonus.ser` exists.
+- **Cleanup**:
+  - Restore files (reverse the `mv` commands).

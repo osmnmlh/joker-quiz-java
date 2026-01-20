@@ -2,7 +2,7 @@
 
 ## Inputs & Data Files
 
-- Bonus question file is required by the spec but not provided in this repo; bonus parsing is deferred until the file exists.
+- Bonus file created in repo for compliance; parsing/caching to be implemented in next steps.
 
 ## Runtime Environment
 

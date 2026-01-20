@@ -10,6 +10,7 @@
 | perguntas_3000.txt | 3000 level questions | UTF-8; Portuguese text; 4 options per question |
 | perguntas_10000.txt | 10000 level questions | UTF-8; Portuguese text; 4 options per question |
 | perguntas_50000.txt | 50000 level questions | UTF-8; Portuguese text; 4 options per question |
+| perguntas_bonus.txt | bonus questions | UTF-8; Portuguese text; 2 options per question |
 
 ## Format Specification
 
@@ -21,6 +22,34 @@ Normal question files use a fixed 7-line block per question:
 4. Line 7: Blank line separating question blocks.
 
 There is no joker-eligibility metadata in these files.
+
+## Bonus Questions File (perguntas_bonus.txt)
+
+- **Location**: repo root (same level as `pom.xml`).
+- **Block format** (5 lines per question):
+  1. Line 1: Question text.
+  2. Line 2: `A. <option text>`
+  3. Line 3: `B. <option text>`
+  4. Line 4: `Resposta: <A|B>`
+  5. Line 5: Blank line separating question blocks.
+
+### Bonus Examples
+
+```
+Qual e a capital de Espanha?
+A. Madrid
+B. Barcelona
+Resposta: A
+
+```
+
+```
+Qual planeta e conhecido como o Planeta Vermelho?
+A. Marte
+B. Venus
+Resposta: A
+
+```
 
 ## Examples
 
@@ -36,12 +65,6 @@ A
 
 ```
 
-## Bonus Question File Status (TBD)
-
-- The bonus question text file is required by the spec but has not been provided in this repo.
-- Until the file exists, the exact bonus format cannot be documented or parsed.
-- Decision: treat bonus format as **TBD** and implement a warning/skip path; once the file is provided, document the observed format here and add parsing/caching.
-
 ## Ambiguities / Open Questions
 
-- No bonus question file has been provided yet, so its format remains unknown.
+- Bonus parsing and caching are not implemented yet; they will be added in the next step.

@@ -34,7 +34,7 @@
 | REQ-28 | Must store Pergunta objects in object files (serialized). | [done] | Evidence: `QuestionCache#savePerguntasNormais`/`savePerguntasBonus` with `ObjectOutputStream`. |
 | REQ-29 | Text files read only once. | [done] | Evidence: `QuestionBankBootstrap#carregarPerguntasNormais` parses only if cache missing. |
 | REQ-30 | Evaluation reads questions from object files (not text). | [done] | Evidence: `QuestionBankBootstrap` loads caches when present; `play` path uses it via `JogoDoJoker`. |
-| REQ-31 | There is one file per money level (200/500/1000/3000/10000/50000) + one bonus file. | [processing] | Evidence: `QuestionPaths` handles normal files; bonus file detection exists but bonus text file not present in repo (see `docs/QUESTION_FILE_FORMAT.md`). |
+| REQ-31 | There is one file per money level (200/500/1000/3000/10000/50000) + one bonus file. | [processing] | Evidence: Normal files exist for all money levels; bonus file exists at `perguntas_bonus.txt` and is discoverable via `QuestionPaths#findBonusTextFile`; bonus parsing/caching still pending. |
 | REQ-32 | Implement class JogoDoJoker. | [done] | Evidence: `pt.uevora.joker.game.JogoDoJoker`. |
 | REQ-33 | JogoDoJoker has method jogar(). | [done] | Evidence: `JogoDoJoker#jogar`. |
 | REQ-34 | Must account for joker usage (eliminate wrong options). | [done] | Evidence: `JokerMechanics#applyOneJoker`. |

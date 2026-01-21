@@ -36,6 +36,15 @@ Expected output signals:
 - Prompts to use jokers and answer questions.
 - Bonus rounds after rounds 4 and 8 if bonus cache exists; otherwise a warning that bonus questions are missing.
 
+### Run GUI (optional)
+
+```bash
+java -cp target/classes pt.uevora.joker.app.GuiMain
+```
+
+Notes:
+- If JavaFX is not available, GUI will refuse to launch.
+
 ## Question Files & Cache Paths
 
 - Normal question files are expected in the repo root:

@@ -18,6 +18,7 @@ java -cp target/classes pt.uevora.joker.app.Main build-cache
 ```
 
 Alternate (after packaging a JAR):
+
 ```bash
 java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main build-cache
 ```
@@ -43,7 +44,8 @@ java -cp target/classes pt.uevora.joker.app.GuiMain
 ```
 
 Notes:
-- If JavaFX is not available, GUI will refuse to launch.
+- If the environment is headless, the GUI will refuse to launch.
+- This GUI uses Swing to avoid JavaFX environment issues.
 
 ## Question Files & Cache Paths
 

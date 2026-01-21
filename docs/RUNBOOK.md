@@ -18,6 +18,7 @@ java -cp target/classes pt.uevora.joker.app.Main build-cache
 ```
 
 Alternate (after packaging a JAR):
+
 ```bash
 java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main build-cache
 ```
@@ -35,6 +36,16 @@ java -cp target/joker-quiz-0.1.0-SNAPSHOT.jar pt.uevora.joker.app.Main play
 Expected output signals:
 - Prompts to use jokers and answer questions.
 - Bonus rounds after rounds 4 and 8 if bonus cache exists; otherwise a warning that bonus questions are missing.
+
+### Run GUI (optional)
+
+```bash
+java -cp target/classes pt.uevora.joker.app.GuiMain
+```
+
+Notes:
+- If the environment is headless, the GUI will refuse to launch.
+- This GUI uses Swing to avoid JavaFX environment issues.
 
 ## Question Files & Cache Paths
 

@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import pt.uevora.joker.app.ui.ConsoleGameIO;
 import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
 import pt.uevora.joker.game.JogoDoJoker;
@@ -28,7 +29,7 @@ public class Main {
                     handleBuildCache();
                     break;
                 case "play":
-                    new JogoDoJoker().jogar();
+                    new JogoDoJoker(new ConsoleGameIO()).jogar();
                     break;
                 default:
                     printUsage();

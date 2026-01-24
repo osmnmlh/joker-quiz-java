@@ -2,7 +2,9 @@ package pt.uevora.joker.app;
 
 import java.awt.GraphicsEnvironment;
 
-import pt.uevora.joker.app.ui.swing.JokerSwingApp;
+import javax.swing.SwingUtilities;
+
+import pt.uevora.joker.app.ui.swing.MainMenuFrame;
 
 public class GuiMain {
     public static void main(String[] args) {
@@ -12,6 +14,6 @@ public class GuiMain {
             return;
         }
 
-        JokerSwingApp.launch();
+        SwingUtilities.invokeLater(() -> new MainMenuFrame().setVisible(true));
     }
 }

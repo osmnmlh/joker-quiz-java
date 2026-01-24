@@ -20,7 +20,7 @@ import pt.uevora.joker.io.QuestionPaths;
 
 public class JogoDoJoker {
     private static final int TOTAL_ROUNDS = 12;
-    private static final int START_LEVEL_INDEX = 0;
+    private static final int START_LEVEL_INDEX = 1;
     private static final int START_JOKERS = 7;
     // Policy: when N < 3 on wrong answer, all remaining jokers are lost (Option A).
     private static final boolean RESET_JOKERS_ON_PENALTY = true;
@@ -46,7 +46,7 @@ public class JogoDoJoker {
         EstadoJogador estado = new EstadoJogador(START_LEVEL_INDEX, START_JOKERS);
 
         for (int round = 1; round <= TOTAL_ROUNDS; round++) {
-            if (round == TOTAL_ROUNDS && io.requestStopFinalRound(estado)) {
+            if (round == TOTAL_ROUNDS && io.requestStopFinalRoundAsync(estado).join()) {
                 estado.ajustarNivelDinheiro(-1);
                 break;
             }
@@ -58,12 +58,12 @@ public class JogoDoJoker {
 
             io.showNormalQuestion(round, pergunta, session, estado);
             while (JokerMechanics.canApplyJoker(session, estado.getQuantidadeJokers())
-                    && io.requestUseJoker(estado, session)) {
+                    && io.requestUseJokerAsync(estado, session).join()) {
                 JokerMechanics.applyOneJoker(session, estado);
                 io.showNormalQuestion(round, pergunta, session, estado);
             }
 
-            int resposta = io.requestAnswerIndex(session);
+            int resposta = io.requestAnswerIndexAsync(pergunta, session, estado, round).join();
             boolean correta = pergunta.validarResposta(resposta);
             if (correta) {
                 estado.avancarNivelDinheiro();

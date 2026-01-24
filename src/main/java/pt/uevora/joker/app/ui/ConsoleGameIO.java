@@ -3,6 +3,7 @@ package pt.uevora.joker.app.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.CompletableFuture;
 
 import pt.uevora.joker.domain.EstadoJogador;
 import pt.uevora.joker.domain.PerguntaNormal;
@@ -42,7 +43,29 @@ public class ConsoleGameIO implements GameIO {
     }
 
     @Override
-    public boolean requestUseJoker(EstadoJogador estado, PerguntaNormalSession session) {
+    public CompletableFuture<Boolean> requestUseJokerAsync(EstadoJogador estado, PerguntaNormalSession session) {
+        return CompletableFuture.completedFuture(requestUseJokerSync());
+    }
+
+    @Override
+    public CompletableFuture<Integer> requestAnswerIndexAsync(PerguntaNormal pergunta, PerguntaNormalSession session,
+                                                             EstadoJogador estado, int roundNumber) {
+        return CompletableFuture.completedFuture(requestAnswerIndexSync(session));
+    }
+
+    @Override
+    public CompletableFuture<Boolean> requestStopFinalRoundAsync(EstadoJogador estado) {
+        return CompletableFuture.completedFuture(requestStopFinalRoundSync());
+    }
+
+    private void showRemainingOptions(PerguntaNormal pergunta, PerguntaNormalSession session) {
+        for (Integer indice : session.getOpcoesRestantes()) {
+            char letra = (char) ('A' + indice);
+            System.out.println(letra + ". " + pergunta.getOpcoes().get(indice));
+        }
+    }
+
+    private boolean requestUseJokerSync() {
         while (true) {
             System.out.print("Use a joker to remove one option? (y/n): ");
             String input = readLine();
@@ -60,8 +83,7 @@ public class ConsoleGameIO implements GameIO {
         }
     }
 
-    @Override
-    public int requestAnswerIndex(PerguntaNormalSession session) {
+    private int requestAnswerIndexSync(PerguntaNormalSession session) {
         while (true) {
             System.out.print("Choose your answer (A/B/C/D): ");
             String input = readLine();
@@ -86,8 +108,7 @@ public class ConsoleGameIO implements GameIO {
         }
     }
 
-    @Override
-    public boolean requestStopFinalRound(EstadoJogador estado) {
+    private boolean requestStopFinalRoundSync() {
         while (true) {
             System.out.print("Final round: do you want to STOP and keep your prize? (y/n): ");
             String input = readLine();
@@ -102,13 +123,6 @@ public class ConsoleGameIO implements GameIO {
                 return false;
             }
             System.out.println("Please enter y or n.");
-        }
-    }
-
-    private void showRemainingOptions(PerguntaNormal pergunta, PerguntaNormalSession session) {
-        for (Integer indice : session.getOpcoesRestantes()) {
-            char letra = (char) ('A' + indice);
-            System.out.println(letra + ". " + pergunta.getOpcoes().get(indice));
         }
     }
 

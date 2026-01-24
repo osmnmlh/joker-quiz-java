@@ -1,5 +1,7 @@
 package pt.uevora.joker.app.ui;
 
+import java.util.concurrent.CompletableFuture;
+
 import pt.uevora.joker.domain.EstadoJogador;
 import pt.uevora.joker.domain.PerguntaNormal;
 import pt.uevora.joker.game.mechanics.PerguntaNormalSession;
@@ -14,9 +16,10 @@ public interface GameIO {
     void showNormalQuestion(int roundNumber, PerguntaNormal pergunta, PerguntaNormalSession session,
                             EstadoJogador estado);
 
-    boolean requestUseJoker(EstadoJogador estado, PerguntaNormalSession session);
+    CompletableFuture<Boolean> requestUseJokerAsync(EstadoJogador estado, PerguntaNormalSession session);
 
-    int requestAnswerIndex(PerguntaNormalSession session);
+    CompletableFuture<Integer> requestAnswerIndexAsync(PerguntaNormal pergunta, PerguntaNormalSession session,
+                                                      EstadoJogador estado, int roundNumber);
 
-    boolean requestStopFinalRound(EstadoJogador estado);
+    CompletableFuture<Boolean> requestStopFinalRoundAsync(EstadoJogador estado);
 }

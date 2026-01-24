@@ -1,11 +1,11 @@
 package pt.uevora.joker.game;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import pt.uevora.joker.app.ui.GameIO;
 import pt.uevora.joker.domain.EstadoJogador;
 import pt.uevora.joker.domain.MoneyLevels;
 import pt.uevora.joker.domain.PerguntaBonus;
@@ -15,8 +15,6 @@ import pt.uevora.joker.game.bonus.BonusRound;
 import pt.uevora.joker.game.mechanics.JokerMechanics;
 import pt.uevora.joker.game.mechanics.PerguntaNormalSession;
 import pt.uevora.joker.io.QuestionBankBootstrap;
-import pt.uevora.joker.io.QuestionCache;
-import pt.uevora.joker.io.QuestionPaths;
 
 public class JogoDoJoker {
     private static final int TOTAL_ROUNDS = 12;
@@ -24,135 +22,65 @@ public class JogoDoJoker {
     private static final int START_JOKERS = 7;
     // Policy: when N < 3 on wrong answer, all remaining jokers are lost (Option A).
     private static final boolean RESET_JOKERS_ON_PENALTY = true;
+    private final GameIO io;
+
+    public JogoDoJoker(GameIO io) {
+        this.io = Objects.requireNonNull(io, "io");
+    }
 
     public void jogar() {
+        EstadoJogador estado = new EstadoJogador(START_LEVEL_INDEX, START_JOKERS);
+        String endReason = "Completed all rounds";
         try {
             Map<Integer, List<PerguntaNormal>> perguntasCarregadas = QuestionBankBootstrap.carregarPerguntasNormais();
             NormalQuestionBank banco = new NormalQuestionBank(perguntasCarregadas);
-            executarJogo(banco);
+            endReason = executarJogo(banco, estado);
         } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
+            io.showError("Error: " + e.getMessage());
+            endReason = "Game ended due to missing questions";
         } catch (IllegalStateException e) {
-            System.err.println("Error: " + e.getMessage());
+            io.showError("Error: " + e.getMessage());
+            endReason = "Game ended due to missing questions";
         }
+        int premio = MoneyLevels.LEVELS[estado.getIndiceNivelDinheiro()];
+        io.showFinalSummary(premio, estado.getQuantidadeJokers(), endReason);
     }
 
-    private void executarJogo(NormalQuestionBank banco) throws IOException {
-        EstadoJogador estado = new EstadoJogador(START_LEVEL_INDEX, START_JOKERS);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
+    private String executarJogo(NormalQuestionBank banco, EstadoJogador estado) throws IOException {
         for (int round = 1; round <= TOTAL_ROUNDS; round++) {
-            if (round == TOTAL_ROUNDS && desejaParar(reader)) {
+            if (round == TOTAL_ROUNDS && io.requestStopFinalRoundAsync(estado).join()) {
                 estado.ajustarNivelDinheiro(-1);
-                break;
+                return "Stopped on final round (−1 level applied)";
             }
 
             int indiceNivel = estado.getIndiceNivelDinheiro();
-            int valorNivel = MoneyLevels.LEVELS[indiceNivel];
+            int targetIndex = Math.min(indiceNivel + 1, MoneyLevels.maxIndex());
+            int valorNivel = MoneyLevels.LEVELS[targetIndex];
             PerguntaNormal pergunta = banco.getNextQuestionForLevel(valorNivel);
             PerguntaNormalSession session = new PerguntaNormalSession(pergunta);
 
-            exibirPergunta(pergunta, session);
+            io.showNormalQuestion(round, pergunta, session, estado);
             while (JokerMechanics.canApplyJoker(session, estado.getQuantidadeJokers())
-                    && desejaUsarJoker(reader)) {
+                    && io.requestUseJokerAsync(estado, session).join()) {
                 JokerMechanics.applyOneJoker(session, estado);
-                exibirOpcoesRestantes(pergunta, session);
+                io.showNormalQuestion(round, pergunta, session, estado);
             }
 
-            int resposta = solicitarResposta(reader, session);
+            int resposta = io.requestAnswerIndexAsync(pergunta, session, estado, round).join();
             boolean correta = pergunta.validarResposta(resposta);
             if (correta) {
                 estado.avancarNivelDinheiro();
-                System.out.println("Correct! Moving up a level.");
+                io.showInfo("Correct! Moving up a level.");
             } else {
                 aplicarPenalidadePorErro(estado);
-                System.out.println("Wrong answer.");
+                io.showInfo("Wrong answer.");
             }
 
             if (round == 4 || round == 8) {
-                executarBonusSeDisponivel(estado, reader);
+                executarBonusSeDisponivel(estado);
             }
         }
-
-        int premio = MoneyLevels.LEVELS[estado.getIndiceNivelDinheiro()];
-        System.out.println("Final prize: " + premio);
-        System.out.println("Final jokers: " + estado.getQuantidadeJokers());
-    }
-
-    private boolean desejaParar(BufferedReader reader) throws IOException {
-        while (true) {
-            System.out.print("Final round: do you want to STOP and keep your prize? (y/n): ");
-            String input = reader.readLine();
-            if (input == null) {
-                return false;
-            }
-            String normalized = input.trim().toLowerCase();
-            if (normalized.equals("y") || normalized.equals("yes") || normalized.equals("stop")) {
-                return true;
-            }
-            if (normalized.equals("n") || normalized.equals("no")) {
-                return false;
-            }
-            System.out.println("Please enter y or n.");
-        }
-    }
-
-    private boolean desejaUsarJoker(BufferedReader reader) throws IOException {
-        while (true) {
-            System.out.print("Use a joker to remove one option? (y/n): ");
-            String input = reader.readLine();
-            if (input == null) {
-                return false;
-            }
-            String normalized = input.trim().toLowerCase();
-            if (normalized.equals("y") || normalized.equals("yes")) {
-                return true;
-            }
-            if (normalized.equals("n") || normalized.equals("no")) {
-                return false;
-            }
-            System.out.println("Please enter y or n.");
-        }
-    }
-
-    private int solicitarResposta(BufferedReader reader, PerguntaNormalSession session) throws IOException {
-        while (true) {
-            System.out.print("Choose your answer (A/B/C/D): ");
-            String input = reader.readLine();
-            if (input == null) {
-                continue;
-            }
-            String normalized = input.trim().toUpperCase();
-            if (normalized.length() != 1) {
-                System.out.println("Enter a single letter.");
-                continue;
-            }
-            int indice = letraParaIndice(normalized.charAt(0));
-            if (indice == -1) {
-                System.out.println("Enter A, B, C, or D.");
-                continue;
-            }
-            if (!session.getOpcoesRestantes().contains(indice)) {
-                System.out.println("That option has been eliminated. Choose from remaining options.");
-                continue;
-            }
-            return indice;
-        }
-    }
-
-    private int letraParaIndice(char letra) {
-        switch (letra) {
-            case 'A':
-                return 0;
-            case 'B':
-                return 1;
-            case 'C':
-                return 2;
-            case 'D':
-                return 3;
-            default:
-                return -1;
-        }
+        return "Completed all rounds";
     }
 
     private void aplicarPenalidadePorErro(EstadoJogador estado) {
@@ -172,38 +100,17 @@ public class JogoDoJoker {
         }
     }
 
-    private void exibirPergunta(PerguntaNormal pergunta, PerguntaNormalSession session) {
-        System.out.println("Question: " + pergunta.getEnunciado());
-        exibirOpcoesRestantes(pergunta, session);
-    }
-
-    private void exibirOpcoesRestantes(PerguntaNormal pergunta, PerguntaNormalSession session) {
-        for (Integer indice : session.getOpcoesRestantes()) {
-            char letra = (char) ('A' + indice);
-            System.out.println(letra + ". " + pergunta.getOpcoes().get(indice));
-        }
-    }
-
-    private void executarBonusSeDisponivel(EstadoJogador estado, BufferedReader reader) throws IOException {
+    private void executarBonusSeDisponivel(EstadoJogador estado) throws IOException {
         List<PerguntaBonus> bonusPerguntas = carregarPerguntasBonus();
         if (bonusPerguntas.isEmpty()) {
-            System.out.println("Warning: bonus round skipped because no bonus questions are available.");
+            io.showWarning("Warning: bonus round skipped because no bonus questions are available.");
             return;
         }
         BonusQuestionBank banco = new BonusQuestionBank(bonusPerguntas);
-        new BonusRound().executar(estado, banco, reader);
+        new BonusRound().executar(estado, banco, io);
     }
 
     private List<PerguntaBonus> carregarPerguntasBonus() throws IOException {
-        if (java.nio.file.Files.exists(QuestionPaths.bonusCacheFile())) {
-            return QuestionCache.loadPerguntasBonus();
-        }
-
-        if (QuestionPaths.findBonusTextFile().isPresent()) {
-            System.out.println("Warning: bonus question file found but parsing is not implemented yet.");
-        } else {
-            System.out.println("Warning: bonus question file/cache missing; bonus rounds will be skipped.");
-        }
-        return java.util.Collections.emptyList();
+        return QuestionBankBootstrap.carregarPerguntasBonus();
     }
 }

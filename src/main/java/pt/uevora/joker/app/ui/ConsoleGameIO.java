@@ -97,9 +97,6 @@ public class ConsoleGameIO implements GameIO {
         while (true) {
             System.out.print("Use a joker to remove one option? (y/n): ");
             String input = readLine();
-            if (input == null) {
-                return false;
-            }
             String normalized = input.trim().toLowerCase();
             if (normalized.equals("y") || normalized.equals("yes")) {
                 return true;
@@ -115,9 +112,6 @@ public class ConsoleGameIO implements GameIO {
         while (true) {
             System.out.print("Choose your answer (A/B/C/D): ");
             String input = readLine();
-            if (input == null) {
-                continue;
-            }
             String normalized = input.trim().toUpperCase();
             if (normalized.length() != 1) {
                 System.out.println("Enter a single letter.");
@@ -140,9 +134,6 @@ public class ConsoleGameIO implements GameIO {
         while (true) {
             System.out.print("Final round: do you want to STOP and keep your prize? (y/n): ");
             String input = readLine();
-            if (input == null) {
-                return false;
-            }
             String normalized = input.trim().toLowerCase();
             if (normalized.equals("y") || normalized.equals("yes") || normalized.equals("stop")) {
                 return true;
@@ -160,9 +151,6 @@ public class ConsoleGameIO implements GameIO {
         System.out.println("B. " + pergunta.getOpcoes().get(1));
         while (true) {
             String input = readLine();
-            if (input == null) {
-                continue;
-            }
             String normalized = input.trim().toUpperCase();
             int indice = bonusLetterToIndex(normalized);
             if (indice == -1) {
@@ -204,7 +192,11 @@ public class ConsoleGameIO implements GameIO {
 
     private String readLine() {
         try {
-            return reader.readLine();
+            String line = reader.readLine();
+            if (line == null) {
+                throw new IllegalStateException("Input stream closed");
+            }
+            return line;
         } catch (IOException e) {
             showError("Error: " + e.getMessage());
             return null;

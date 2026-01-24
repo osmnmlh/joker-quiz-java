@@ -15,8 +15,6 @@ import pt.uevora.joker.game.bonus.BonusRound;
 import pt.uevora.joker.game.mechanics.JokerMechanics;
 import pt.uevora.joker.game.mechanics.PerguntaNormalSession;
 import pt.uevora.joker.io.QuestionBankBootstrap;
-import pt.uevora.joker.io.QuestionCache;
-import pt.uevora.joker.io.QuestionPaths;
 
 public class JogoDoJoker {
     private static final int TOTAL_ROUNDS = 12;
@@ -52,7 +50,8 @@ public class JogoDoJoker {
             }
 
             int indiceNivel = estado.getIndiceNivelDinheiro();
-            int valorNivel = MoneyLevels.LEVELS[indiceNivel];
+            int targetIndex = Math.min(indiceNivel + 1, MoneyLevels.maxIndex());
+            int valorNivel = MoneyLevels.LEVELS[targetIndex];
             PerguntaNormal pergunta = banco.getNextQuestionForLevel(valorNivel);
             PerguntaNormalSession session = new PerguntaNormalSession(pergunta);
 
@@ -110,15 +109,6 @@ public class JogoDoJoker {
     }
 
     private List<PerguntaBonus> carregarPerguntasBonus() throws IOException {
-        if (java.nio.file.Files.exists(QuestionPaths.bonusCacheFile())) {
-            return QuestionCache.loadPerguntasBonus();
-        }
-
-        if (QuestionPaths.findBonusTextFile().isPresent()) {
-            io.showWarning("Warning: bonus question file found but parsing is not implemented yet.");
-        } else {
-            io.showWarning("Warning: bonus question file/cache missing; bonus rounds will be skipped.");
-        }
-        return java.util.Collections.emptyList();
+        return QuestionBankBootstrap.carregarPerguntasBonus();
     }
 }

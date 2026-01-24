@@ -18,7 +18,7 @@ import pt.uevora.joker.io.QuestionBankBootstrap;
 
 public class JogoDoJoker {
     private static final int TOTAL_ROUNDS = 12;
-    private static final int START_LEVEL_INDEX = 0;
+    private static final int START_LEVEL_INDEX = 1;
     private static final int START_JOKERS = 7;
     // Policy: when N < 3 on wrong answer, all remaining jokers are lost (Option A).
     private static final boolean RESET_JOKERS_ON_PENALTY = true;

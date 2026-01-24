@@ -60,6 +60,7 @@ public class SwingGameIO implements GameIO {
     }
 
     private <T> CompletableFuture<T> notImplemented() {
+        appendStatus(NOT_IMPLEMENTED_MESSAGE);
         CompletableFuture<T> future = new CompletableFuture<>();
         future.completeExceptionally(new IllegalStateException(NOT_IMPLEMENTED_MESSAGE));
         return future;

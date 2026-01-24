@@ -97,6 +97,7 @@ public class BonusPanel extends JPanel {
     }
 
     public void reset() {
+        stopTimer();
         questionArea.setText("");
         countdownLabel.setText("Time left: 60s");
         setCorrectCount(0);

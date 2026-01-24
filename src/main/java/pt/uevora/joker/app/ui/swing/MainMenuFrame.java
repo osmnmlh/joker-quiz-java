@@ -74,6 +74,22 @@ public class MainMenuFrame extends JFrame {
         GameFrame gameFrame = new GameFrame();
         SwingGameIO io = new SwingGameIO(gameFrame);
         runner = new GameRunner(io);
+        gameFrame.setFinalActions(() -> {
+            if (runner != null) {
+                runner.shutdown();
+                runner = null;
+            }
+            SwingUtilities.invokeLater(gameFrame::dispose);
+        }, () -> {
+            if (runner != null) {
+                runner.shutdown();
+                runner = null;
+            }
+            SwingUtilities.invokeLater(() -> {
+                gameFrame.dispose();
+                setVisible(true);
+            });
+        });
         gameFrame.setOnClose(() -> {
             if (runner != null) {
                 runner.shutdown();

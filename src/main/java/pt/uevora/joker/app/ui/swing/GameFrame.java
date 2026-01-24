@@ -114,4 +114,9 @@ public class GameFrame extends JFrame {
     public void setOnClose(Runnable onClose) {
         this.onClose = onClose;
     }
+
+    public void setFinalActions(Runnable onExit, Runnable onBack) {
+        finalPanel.setOnExit(onExit);
+        finalPanel.setOnBack(onBack);
+    }
 }

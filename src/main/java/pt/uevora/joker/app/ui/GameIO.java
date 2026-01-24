@@ -23,7 +23,7 @@ public interface GameIO {
 
     void showBonusSummary(int correct, int jokersGained, EstadoJogador estado);
 
-    void showFinalSummary(int prize, int jokers);
+    void showFinalSummary(int prize, int jokers, String endReason);
 
     CompletableFuture<Boolean> requestUseJokerAsync(EstadoJogador estado, PerguntaNormalSession session);
 

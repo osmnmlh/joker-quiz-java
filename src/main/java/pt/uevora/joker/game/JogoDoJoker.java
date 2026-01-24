@@ -29,24 +29,28 @@ public class JogoDoJoker {
     }
 
     public void jogar() {
+        EstadoJogador estado = new EstadoJogador(START_LEVEL_INDEX, START_JOKERS);
+        String endReason = "Completed all rounds";
         try {
             Map<Integer, List<PerguntaNormal>> perguntasCarregadas = QuestionBankBootstrap.carregarPerguntasNormais();
             NormalQuestionBank banco = new NormalQuestionBank(perguntasCarregadas);
-            executarJogo(banco);
+            endReason = executarJogo(banco, estado);
         } catch (IOException e) {
             io.showError("Error: " + e.getMessage());
+            endReason = "Game ended due to missing questions";
         } catch (IllegalStateException e) {
             io.showError("Error: " + e.getMessage());
+            endReason = "Game ended due to missing questions";
         }
+        int premio = MoneyLevels.LEVELS[estado.getIndiceNivelDinheiro()];
+        io.showFinalSummary(premio, estado.getQuantidadeJokers(), endReason);
     }
 
-    private void executarJogo(NormalQuestionBank banco) throws IOException {
-        EstadoJogador estado = new EstadoJogador(START_LEVEL_INDEX, START_JOKERS);
-
+    private String executarJogo(NormalQuestionBank banco, EstadoJogador estado) throws IOException {
         for (int round = 1; round <= TOTAL_ROUNDS; round++) {
             if (round == TOTAL_ROUNDS && io.requestStopFinalRoundAsync(estado).join()) {
                 estado.ajustarNivelDinheiro(-1);
-                break;
+                return "Stopped on final round (−1 level applied)";
             }
 
             int indiceNivel = estado.getIndiceNivelDinheiro();
@@ -76,9 +80,7 @@ public class JogoDoJoker {
                 executarBonusSeDisponivel(estado);
             }
         }
-
-        int premio = MoneyLevels.LEVELS[estado.getIndiceNivelDinheiro()];
-        io.showFinalSummary(premio, estado.getQuantidadeJokers());
+        return "Completed all rounds";
     }
 
     private void aplicarPenalidadePorErro(EstadoJogador estado) {

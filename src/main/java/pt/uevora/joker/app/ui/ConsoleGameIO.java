@@ -60,9 +60,12 @@ public class ConsoleGameIO implements GameIO {
     }
 
     @Override
-    public void showFinalSummary(int prize, int jokers) {
+    public void showFinalSummary(int prize, int jokers, String endReason) {
         System.out.println("Final prize: " + prize);
         System.out.println("Final jokers: " + jokers);
+        if (endReason != null && !endReason.trim().isEmpty()) {
+            System.out.println(endReason);
+        }
     }
 
     @Override

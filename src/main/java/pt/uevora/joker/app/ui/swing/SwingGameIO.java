@@ -62,6 +62,7 @@ public class SwingGameIO implements GameIO {
         SwingUtilities.invokeLater(() -> {
             lastRoundNumber = roundNumber;
             updateStatus(roundNumber, estado);
+            bonusPanel.stopTimer();
             frame.showNormalCard();
             normalPanel.setQuestion(pergunta.getEnunciado());
             Set<Integer> remaining = new HashSet<>(session.getOpcoesRestantes());
@@ -99,9 +100,11 @@ public class SwingGameIO implements GameIO {
     }
 
     @Override
-    public void showFinalSummary(int prize, int jokers) {
+    public void showFinalSummary(int prize, int jokers, String endReason) {
         SwingUtilities.invokeLater(() -> {
-            finalPanel.setSummary(prize, jokers);
+            cancelPending("Game ended");
+            bonusPanel.stopTimer();
+            finalPanel.setSummary(prize, jokers, endReason);
             frame.showFinalCard();
         });
     }
@@ -234,12 +237,16 @@ public class SwingGameIO implements GameIO {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         pendingStopDecision = future;
         SwingUtilities.invokeLater(() -> {
-            int choice = JOptionPane.showConfirmDialog(frame,
-                    "Final round: do you want to STOP and keep your prize?",
+            Object[] options = {"STOP", "Continue"};
+            int choice = JOptionPane.showOptionDialog(frame,
+                    "Do you want to STOP? You will lose 1 level and keep the prize.",
                     "Final Round",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-            future.complete(choice == JOptionPane.YES_OPTION);
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            future.complete(choice == 0);
             pendingStopDecision = null;
         });
         return future;
@@ -257,6 +264,25 @@ public class SwingGameIO implements GameIO {
         }
         if (pendingStopDecision != null && !pendingStopDecision.isDone()) {
             throw new IllegalStateException("Pending stop decision already exists");
+        }
+    }
+
+    private void cancelPending(String message) {
+        if (pendingJokerDecision != null && !pendingJokerDecision.isDone()) {
+            pendingJokerDecision.completeExceptionally(new IllegalStateException(message));
+            pendingJokerDecision = null;
+        }
+        if (pendingAnswer != null && !pendingAnswer.isDone()) {
+            pendingAnswer.completeExceptionally(new IllegalStateException(message));
+            pendingAnswer = null;
+        }
+        if (pendingBonusAnswer != null && !pendingBonusAnswer.isDone()) {
+            pendingBonusAnswer.completeExceptionally(new IllegalStateException(message));
+            pendingBonusAnswer = null;
+        }
+        if (pendingStopDecision != null && !pendingStopDecision.isDone()) {
+            pendingStopDecision.completeExceptionally(new IllegalStateException(message));
+            pendingStopDecision = null;
         }
     }
 }

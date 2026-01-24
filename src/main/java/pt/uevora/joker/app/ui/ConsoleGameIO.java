@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.concurrent.CompletableFuture;
 
 import pt.uevora.joker.domain.EstadoJogador;
+import pt.uevora.joker.domain.PerguntaBonus;
 import pt.uevora.joker.domain.PerguntaNormal;
 import pt.uevora.joker.game.mechanics.PerguntaNormalSession;
 
@@ -43,6 +44,28 @@ public class ConsoleGameIO implements GameIO {
     }
 
     @Override
+    public void showBonusStart(EstadoJogador estado) {
+        System.out.println("=== Bonus Round (60 seconds) ===");
+    }
+
+    @Override
+    public void showBonusProgress(int correct) {
+        // No-op for console to preserve existing output cadence.
+    }
+
+    @Override
+    public void showBonusSummary(int correct, int jokersGained, EstadoJogador estado) {
+        System.out.println("Bonus correct answers: " + correct);
+        System.out.println("Jokers awarded: " + jokersGained);
+    }
+
+    @Override
+    public void showFinalSummary(int prize, int jokers) {
+        System.out.println("Final prize: " + prize);
+        System.out.println("Final jokers: " + jokers);
+    }
+
+    @Override
     public CompletableFuture<Boolean> requestUseJokerAsync(EstadoJogador estado, PerguntaNormalSession session) {
         return CompletableFuture.completedFuture(requestUseJokerSync());
     }
@@ -51,6 +74,11 @@ public class ConsoleGameIO implements GameIO {
     public CompletableFuture<Integer> requestAnswerIndexAsync(PerguntaNormal pergunta, PerguntaNormalSession session,
                                                              EstadoJogador estado, int roundNumber) {
         return CompletableFuture.completedFuture(requestAnswerIndexSync(session));
+    }
+
+    @Override
+    public CompletableFuture<Integer> requestBonusAnswerIndexAsync(PerguntaBonus pergunta, long remainingMs) {
+        return CompletableFuture.completedFuture(requestBonusAnswerIndexSync(pergunta));
     }
 
     @Override
@@ -126,6 +154,25 @@ public class ConsoleGameIO implements GameIO {
         }
     }
 
+    private int requestBonusAnswerIndexSync(PerguntaBonus pergunta) {
+        System.out.println("Bonus question: " + pergunta.getEnunciado());
+        System.out.println("A. " + pergunta.getOpcoes().get(0));
+        System.out.println("B. " + pergunta.getOpcoes().get(1));
+        while (true) {
+            String input = readLine();
+            if (input == null) {
+                continue;
+            }
+            String normalized = input.trim().toUpperCase();
+            int indice = bonusLetterToIndex(normalized);
+            if (indice == -1) {
+                System.out.println("Invalid answer. Please enter A or B.");
+                continue;
+            }
+            return indice;
+        }
+    }
+
     private int letterToIndex(char letra) {
         switch (letra) {
             case 'A':
@@ -136,6 +183,20 @@ public class ConsoleGameIO implements GameIO {
                 return 2;
             case 'D':
                 return 3;
+            default:
+                return -1;
+        }
+    }
+
+    private int bonusLetterToIndex(String letra) {
+        if (letra == null || letra.length() != 1) {
+            return -1;
+        }
+        switch (letra.charAt(0)) {
+            case 'A':
+                return 0;
+            case 'B':
+                return 1;
             default:
                 return -1;
         }

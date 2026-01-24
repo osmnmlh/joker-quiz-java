@@ -71,8 +71,20 @@ public class MainMenuFrame extends JFrame {
             return;
         }
         appendStatus("Starting game engine (GUI mode)...");
-        SwingGameIO io = new SwingGameIO(this);
+        GameFrame gameFrame = new GameFrame();
+        SwingGameIO io = new SwingGameIO(gameFrame);
         runner = new GameRunner(io);
+        gameFrame.setOnClose(() -> {
+            if (runner != null) {
+                runner.shutdown();
+                runner = null;
+            }
+            SwingUtilities.invokeLater(() -> setVisible(true));
+        });
+        SwingUtilities.invokeLater(() -> {
+            setVisible(false);
+            gameFrame.setVisible(true);
+        });
         runner.start();
     }
 

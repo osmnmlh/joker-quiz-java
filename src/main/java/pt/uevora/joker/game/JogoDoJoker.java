@@ -79,8 +79,7 @@ public class JogoDoJoker {
         }
 
         int premio = MoneyLevels.LEVELS[estado.getIndiceNivelDinheiro()];
-        io.showInfo("Final prize: " + premio);
-        io.showInfo("Final jokers: " + estado.getQuantidadeJokers());
+        io.showFinalSummary(premio, estado.getQuantidadeJokers());
     }
 
     private void aplicarPenalidadePorErro(EstadoJogador estado) {
@@ -103,11 +102,11 @@ public class JogoDoJoker {
     private void executarBonusSeDisponivel(EstadoJogador estado) throws IOException {
         List<PerguntaBonus> bonusPerguntas = carregarPerguntasBonus();
         if (bonusPerguntas.isEmpty()) {
-            System.out.println("Warning: bonus round skipped because no bonus questions are available.");
+            io.showWarning("Warning: bonus round skipped because no bonus questions are available.");
             return;
         }
         BonusQuestionBank banco = new BonusQuestionBank(bonusPerguntas);
-        new BonusRound().executar(estado, banco, new java.io.BufferedReader(new java.io.InputStreamReader(System.in)));
+        new BonusRound().executar(estado, banco, io);
     }
 
     private List<PerguntaBonus> carregarPerguntasBonus() throws IOException {
@@ -116,9 +115,9 @@ public class JogoDoJoker {
         }
 
         if (QuestionPaths.findBonusTextFile().isPresent()) {
-            System.out.println("Warning: bonus question file found but parsing is not implemented yet.");
+            io.showWarning("Warning: bonus question file found but parsing is not implemented yet.");
         } else {
-            System.out.println("Warning: bonus question file/cache missing; bonus rounds will be skipped.");
+            io.showWarning("Warning: bonus question file/cache missing; bonus rounds will be skipped.");
         }
         return java.util.Collections.emptyList();
     }
